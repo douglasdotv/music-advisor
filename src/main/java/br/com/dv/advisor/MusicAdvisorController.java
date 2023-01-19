@@ -6,16 +6,13 @@ import java.util.*;
 
 public class MusicAdvisorController {
 
-    private final MusicAdvisorModel model;
-    private final MusicAdvisorView view;
-    private final Map<String, Strategy> inputStrategiesMap;
-    private final Scanner scanner = new Scanner(System.in);
-    private String input;
+    private static final MusicAdvisorModel model = new MusicAdvisorModel();
+    private static final MusicAdvisorView view = new MusicAdvisorView();
+    private static final Map<String, Strategy> inputStrategiesMap = new HashMap<>();
+    private static final Scanner scanner = new Scanner(System.in);
+    private static String input;
 
-    public MusicAdvisorController(MusicAdvisorModel model, MusicAdvisorView view) {
-        this.model = model;
-        this.view = view;
-        this.inputStrategiesMap = new HashMap<>();
+    static {
         inputStrategiesMap.put("featured", new FeaturedStrategy(model, view));
         inputStrategiesMap.put("new", new NewStrategy(model, view));
         inputStrategiesMap.put("categories", new CategoriesStrategy(model, view));
@@ -23,7 +20,7 @@ public class MusicAdvisorController {
         inputStrategiesMap.put("playlists", new PlaylistsStrategy(model, view, input));
     }
 
-    public void run() {
+    public static void run() {
         while (true) {
             input = scanner.nextLine().trim();
             String[] inputArray = input.split("\\s+");
