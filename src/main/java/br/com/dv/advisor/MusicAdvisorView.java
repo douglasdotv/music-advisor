@@ -36,9 +36,17 @@ public class MusicAdvisorView {
         System.out.println("Invalid input!");
     }
 
+    public void displayOAuthSuccessMsg(String authorizationUrl) {
+        System.out.println(authorizationUrl);
+        System.out.println("---SUCCESS---");
+    }
+
+    public void displayOAuthProvideAccessMsg() {
+        System.out.println("Please, provide access for application.");
+    }
+
     public void exit() {
         System.out.println("---GOODBYE!---");
         System.exit(0);
     }
-
 }

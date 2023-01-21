@@ -11,6 +11,7 @@ public class MusicAdvisorController {
     private static final Map<String, Strategy> inputStrategiesMap = new HashMap<>();
     private static final Scanner scanner = new Scanner(System.in);
     private static String input;
+    private static boolean oAuth = false;
 
     static {
         inputStrategiesMap.put("featured", new FeaturedStrategy(model, view));
@@ -18,16 +19,23 @@ public class MusicAdvisorController {
         inputStrategiesMap.put("categories", new CategoriesStrategy(model, view));
         inputStrategiesMap.put("exit", new ExitStrategy(view));
         inputStrategiesMap.put("playlists", new PlaylistsStrategy(model, view, input));
+        inputStrategiesMap.put("auth", new AuthStrategy(model, view));
     }
 
     public static void run() {
         while (true) {
             input = scanner.nextLine().trim();
             String[] inputArray = input.split("\\s+");
-
             Strategy strategy = inputStrategiesMap.get(inputArray[0]);
 
-            if (strategy != null) {
+            if (strategy instanceof ExitStrategy) {
+                break;
+            }
+            if (strategy instanceof AuthStrategy) {
+                oAuth = true;
+            }
+
+            if (strategy != null && oAuth) {
                 if (inputArray[0].equals("playlists")) {
                     if (input.equals("playlists")) {
                         System.out.println("Type one of the categories below after \"playlists\": ");
@@ -36,14 +44,13 @@ public class MusicAdvisorController {
                         strategy = new PlaylistsStrategy(model, view, input);
                     }
                 }
-
                 strategy.handleInput();
-
-                if (strategy instanceof ExitStrategy) {
-                    break;
-                }
             } else {
-                view.displayInvalidInputMsg();
+                if (!oAuth) {
+                    view.displayOAuthProvideAccessMsg();
+                } else {
+                    view.displayInvalidInputMsg();
+                }
             }
         }
     }

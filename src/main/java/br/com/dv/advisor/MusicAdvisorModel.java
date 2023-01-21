@@ -10,6 +10,7 @@ public class MusicAdvisorModel {
     private final List<String> featuredPlaylists;
     private final List<String> categories;
     private final Map<String, List<String>> playlistsByCategory;
+    private final String authorizationUrl;
 
     public MusicAdvisorModel() {
         newReleases = List.of(
@@ -33,6 +34,8 @@ public class MusicAdvisorModel {
                 "Rage Beats",
                 "Arab Mood Booster",
                 "Sunday Stroll"));
+
+        authorizationUrl = "https://accounts.spotify.com/authorize?client_id=a19ee7dbfda443b2a8150c9101bfd645&redirect_uri=http://localhost:8080&response_type=code";
     }
 
     public List<String> getNewReleases() {
@@ -49,6 +52,10 @@ public class MusicAdvisorModel {
 
     public Map<String, List<String>> getPlaylistsByCategory() {
         return playlistsByCategory;
+    }
+
+    public String getAuthorizationUrl() {
+        return authorizationUrl;
     }
 
     public void addToPlaylistsByCategory(String category, List<String> playlist) {
