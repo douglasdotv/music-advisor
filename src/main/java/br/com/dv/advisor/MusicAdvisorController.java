@@ -17,9 +17,9 @@ public class MusicAdvisorController {
         inputStrategiesMap.put("featured", new FeaturedStrategy(model, view));
         inputStrategiesMap.put("new", new NewStrategy(model, view));
         inputStrategiesMap.put("categories", new CategoriesStrategy(model, view));
-        inputStrategiesMap.put("exit", new ExitStrategy(view));
         inputStrategiesMap.put("playlists", new PlaylistsStrategy(model, view, input));
-        inputStrategiesMap.put("auth", new AuthStrategy(model, view));
+        inputStrategiesMap.put("exit", new ExitStrategy(view));
+        inputStrategiesMap.put("auth", new AuthStrategy(view));
     }
 
     public static void run() {

@@ -32,17 +32,32 @@ public class MusicAdvisorView {
         }
     }
 
-    public void displayInvalidInputMsg() {
-        System.out.println("Invalid input!");
+    public void displayOAuthProvideAccessMsg() {
+        System.out.println("Please provide access for the application.");
     }
 
-    public void displayOAuthSuccessMsg(String authorizationUrl) {
-        System.out.println(authorizationUrl);
+    public void displayAuthWaitingMsg(String authUrl) {
+        System.out.println("use this link to request the access code: ");
+        System.out.println(authUrl);
+        System.out.println("waiting for the code...");
+    }
+
+    public void displayAuthCodeReceivedMsg() {
+        System.out.println("code received");
+    }
+
+    public void displayAuthMakingHttpRequestMsg() {
+        System.out.println("making http request for access_token...");
+    }
+
+    public void displayAuthResponseMsg(String accessToken) {
+        System.out.println("response: ");
+        System.out.println(accessToken);
         System.out.println("---SUCCESS---");
     }
 
-    public void displayOAuthProvideAccessMsg() {
-        System.out.println("Please, provide access for application.");
+    public void displayInvalidInputMsg() {
+        System.out.println("Invalid input!");
     }
 
     public void exit() {
