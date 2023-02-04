@@ -1,6 +1,8 @@
-package br.com.dv.advisor;
+package br.com.dv.advisor.controller;
 
-import br.com.dv.advisor.inputstrategy.*;
+import br.com.dv.advisor.model.MusicAdvisorModel;
+import br.com.dv.advisor.controller.inputstrategy.*;
+import br.com.dv.advisor.view.MusicAdvisorView;
 
 import java.util.*;
 
@@ -37,22 +39,17 @@ public class MusicAdvisorController {
 
             if (strategy != null && oAuth) {
                 if (inputArray[0].equals("playlists")) {
-                    if (input.equals("playlists")) {
-                        System.out.println("Type one of the categories below after \"playlists\": ");
-                        strategy = new CategoriesStrategy(model, view);
-                    } else {
-                        strategy = new PlaylistsStrategy(model, view, input);
-                    }
+                    strategy = new PlaylistsStrategy(model, view, input);
                 }
                 strategy.handleInput();
             } else {
-                if (!oAuth) {
-                    view.displayOAuthProvideAccessMsg();
-                } else {
-                    view.displayInvalidInputMsg();
-                }
+            if (!oAuth) {
+                view.displayOAuthProvideAccessMsg();
+            } else {
+                view.displayInvalidInputMsg();
             }
         }
     }
+}
 
 }

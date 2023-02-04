@@ -1,6 +1,6 @@
-package br.com.dv.advisor.inputstrategy;
+package br.com.dv.advisor.controller.inputstrategy;
 
-import br.com.dv.advisor.MusicAdvisorView;
+import br.com.dv.advisor.view.MusicAdvisorView;
 
 public class ExitStrategy implements Strategy {
 

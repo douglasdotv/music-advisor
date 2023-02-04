@@ -1,7 +1,7 @@
 package br.com.dv.advisor.oauth2;
 
-import br.com.dv.advisor.MusicAdvisorConfig;
-import br.com.dv.advisor.MusicAdvisorView;
+import br.com.dv.advisor.config.MusicAdvisorConfig;
+import br.com.dv.advisor.view.MusicAdvisorView;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.sun.net.httpserver.HttpServer;
@@ -17,56 +17,48 @@ import java.util.Objects;
 public class Authorization {
 
     private final MusicAdvisorView view;
+    private static HttpServer server;
+    private static String code;
 
     public Authorization(MusicAdvisorView view) {
         this.view = view;
     }
 
     public void createHttpServer() {
-        HttpServer server;
-
         try {
             server = HttpServer.create();
+            server.bind(new InetSocketAddress((8080)), 0);
         } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        try {
-            server.bind(new InetSocketAddress(8080), 0);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
 
         server.start();
 
-        view.displayAuthWaitingMsg(MusicAdvisorConfig.AUTH_URL);
+        server.createContext("/", exchange -> {
+            String query = exchange.getRequestURI().toString();
+            String response;
+            if (query.contains("code=")) {
+                code = query.split("=")[1];
+                response = "Got the code. Return back to your program.";
+            } else {
+                response = "Authorization code not found. Try again.";
+            }
+            exchange.sendResponseHeaders(200, response.length());
+            exchange.getResponseBody().write(response.getBytes());
+            exchange.getResponseBody().close();
+        });
 
-        server.createContext("/",
-                exchange -> {
-                    String query = exchange.getRequestURI().getQuery();
-                    MusicAdvisorConfig.AUTH_CODE = query.substring(5);
+        view.displayWaitingForCodeMsg();
+        while (code == null) {
+            sleep();
+        }
 
-                    if (MusicAdvisorConfig.AUTH_CODE.isEmpty()) {
-                        // Authorization code not found
-                        String response = "Authorization code not found. Try again.";
-                        exchange.sendResponseHeaders(200, response.length());
-                        exchange.getResponseBody().write(response.getBytes());
-                    } else {
-                        // Got the code
-                        String response = "Got the code. Return back to your program.";
-                        exchange.sendResponseHeaders(200, response.length());
-                        exchange.getResponseBody().write(response.getBytes());
-                        view.displayAuthCodeReceivedMsg();
-                        // Shut down the server
-                        server.stop(0);
+        MusicAdvisorConfig.AUTH_CODE = code;
 
-                        // POST Request
-                        getAccessToken();
-                    }
-                }
-        );
+        server.stop(5);
     }
 
-    private void getAccessToken() {
+    public void getAccessToken() {
         view.displayAuthMakingHttpRequestMsg();
 
         HttpRequest request = HttpRequest.newBuilder()
@@ -89,6 +81,14 @@ public class Authorization {
             view.displayAuthResponseMsg(Objects.requireNonNull(response).body());
         } catch (InterruptedException | IOException e) {
             System.out.println("Error");
+        }
+    }
+
+    private static void sleep() {
+        try {
+            Thread.sleep(10);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 
