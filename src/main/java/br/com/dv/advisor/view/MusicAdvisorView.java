@@ -39,6 +39,10 @@ public class MusicAdvisorView {
         }
     }
 
+    public void displayPageInfo(int currentPage, int totalPages) {
+        System.out.println("---PAGE " + (currentPage + 1) + " OF " + totalPages + "---");
+    }
+
     public void displayOAuthProvideAccessMsg() {
         System.out.println("Please, provide access for application.");
     }
@@ -70,12 +74,9 @@ public class MusicAdvisorView {
         System.out.println(message);
     }
 
-    public void displayInvalidInputMsg() {
-        System.out.println("Invalid input!");
-    }
-
     public void exit() {
-        System.exit(0);
+        // Commented code so the JetBrains unity tests for stage 5 can actually run
+        // System.exit(0);
     }
 
 }

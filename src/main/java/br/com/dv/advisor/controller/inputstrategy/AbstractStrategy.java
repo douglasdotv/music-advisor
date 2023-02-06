@@ -1,5 +1,7 @@
 package br.com.dv.advisor.controller.inputstrategy;
 
+import br.com.dv.advisor.config.MusicAdvisorConfig;
+import br.com.dv.advisor.controller.MusicAdvisorController;
 import br.com.dv.advisor.data.AlbumData;
 import br.com.dv.advisor.data.CategoryData;
 import br.com.dv.advisor.data.PlaylistData;
@@ -11,13 +13,21 @@ import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 public abstract class AbstractStrategy implements Strategy {
 
+    protected final MusicAdvisorController controller;
     protected final MusicAdvisorModel model;
     protected final MusicAdvisorView view;
+    protected final Scanner scanner = new Scanner(System.in);
+    protected String nextInput;
+    protected int currentPage;
+    protected int totalPages;
+    protected int itemsPerPage = MusicAdvisorConfig.ITEMS_PER_PAGE;
 
     public AbstractStrategy(MusicAdvisorModel model, MusicAdvisorView view) {
+        this.controller = MusicAdvisorController.getInstance();
         this.model = model;
         this.view = view;
     }
@@ -80,6 +90,19 @@ public abstract class AbstractStrategy implements Strategy {
         }
 
         return albums;
+    }
+
+    protected <T> void calculateTotalPages(List<T> list) {
+        currentPage = 0;
+        totalPages = (int) Math.ceil(list.size() / (double) itemsPerPage);
+    }
+
+    protected int getStartIndex() {
+        return currentPage * itemsPerPage;
+    }
+
+    protected <T> int getEndIndex(List<T> list) {
+        return Math.min((currentPage + 1) * itemsPerPage, list.size());
     }
 
 }

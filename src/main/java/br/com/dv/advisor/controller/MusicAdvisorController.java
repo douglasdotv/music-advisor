@@ -8,12 +8,14 @@ import java.util.*;
 
 public class MusicAdvisorController {
 
+    private static final MusicAdvisorController instance = new MusicAdvisorController();
     private static final MusicAdvisorModel model = new MusicAdvisorModel();
     private static final MusicAdvisorView view = new MusicAdvisorView();
     private static final Map<String, Strategy> inputStrategiesMap = new HashMap<>();
     private static final Scanner scanner = new Scanner(System.in);
     private static String input;
     private static boolean oAuth = false;
+    private static Strategy currentStrategy = null;
 
     static {
         inputStrategiesMap.put("featured", new FeaturedStrategy(model, view));
@@ -24,7 +26,13 @@ public class MusicAdvisorController {
         inputStrategiesMap.put("auth", new AuthStrategy(view));
     }
 
-    public static void run() {
+    private MusicAdvisorController() { }
+
+    public static MusicAdvisorController getInstance() {
+        return instance;
+    }
+
+    public void run() {
         while (true) {
             input = scanner.nextLine().trim();
             String[] inputArray = input.split("\\s+");
@@ -41,15 +49,28 @@ public class MusicAdvisorController {
                 if (inputArray[0].equals("playlists")) {
                     strategy = new PlaylistsStrategy(model, view, input);
                 }
+                currentStrategy = strategy;
                 strategy.handleInput();
             } else {
-            if (!oAuth) {
-                view.displayOAuthProvideAccessMsg();
-            } else {
-                view.displayInvalidInputMsg();
+                if (!oAuth) {
+                    view.displayOAuthProvideAccessMsg();
+                } else {
+                    view.displayErrorMsg("Invalid input");
+                }
             }
         }
     }
-}
+
+    public Strategy getCurrentStrategy() {
+        return currentStrategy;
+    }
+
+    public void setCurrentStrategy(Strategy currentStrategy) {
+        MusicAdvisorController.currentStrategy = currentStrategy;
+    }
+
+    public Map<String, Strategy> getInputStrategiesMap() {
+        return inputStrategiesMap;
+    }
 
 }

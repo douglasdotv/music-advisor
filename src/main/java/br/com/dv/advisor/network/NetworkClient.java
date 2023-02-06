@@ -9,7 +9,9 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
-public class NetworkClient {
+public final class NetworkClient {
+
+    private NetworkClient() { }
 
     public static JsonObject makeGetRequest(String endpoint) {
         try {

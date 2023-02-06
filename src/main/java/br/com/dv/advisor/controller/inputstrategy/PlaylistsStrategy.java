@@ -8,8 +8,8 @@ import br.com.dv.advisor.view.MusicAdvisorView;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
-import java.util.ArrayList;
 import java.util.List;
+
 public class PlaylistsStrategy extends AbstractStrategy {
 
     private final String input;
@@ -21,13 +21,18 @@ public class PlaylistsStrategy extends AbstractStrategy {
 
     @Override
     public void handleInput() {
+        if (input.length() < 10) {
+            view.displayErrorMsg("Invalid input");
+            return;
+        }
+
         String playlistCategory = input.substring(10).toLowerCase();
 
         JsonObject jo;
 
         jo = NetworkClient.makeGetRequest("/categories");
 
-        List<CategoryData> categories = new ArrayList<>();
+        List<CategoryData> categories;
         if (jo == null) {
             view.displayErrorMsg("Error: could not retrieve categories");
         } else {
@@ -37,7 +42,7 @@ public class PlaylistsStrategy extends AbstractStrategy {
         }
 
         String categoryId = null;
-        for (CategoryData category : categories) {
+        for (CategoryData category : model.getCategories()) {
             if (category.name().toLowerCase().equals(playlistCategory)) {
                 categoryId = category.id();
                 break;
@@ -49,7 +54,11 @@ public class PlaylistsStrategy extends AbstractStrategy {
             return;
         }
 
-        jo = NetworkClient.makeGetRequest("/categories/" + categoryId + "/playlists");
+        jo = NetworkClient.makeGetRequest(
+                "/categories/" +
+                        categoryId +
+                        "/playlists"
+        );
 
         if (jo == null) {
             view.displayErrorMsg("Error: could not retrieve playlists");
@@ -62,7 +71,60 @@ public class PlaylistsStrategy extends AbstractStrategy {
                 JsonArray playlists = jo.get("playlists").getAsJsonObject().get("items").getAsJsonArray();
                 List<PlaylistData> playlistsByCategory = parsePlaylistsFromJson(playlists);
                 model.setPlaylistsByCategory(playlistsByCategory);
-                view.displayPlaylistsByCategory(model.getPlaylistsByCategory());
+
+                calculateTotalPages(playlistsByCategory);
+
+                int startIndex = getStartIndex();
+                int endIndex = getEndIndex(playlistsByCategory);
+
+                view.displayPlaylistsByCategory(playlistsByCategory.subList(startIndex, endIndex));
+                view.displayPageInfo(currentPage, totalPages);
+
+                while (scanner.hasNext()) {
+                    nextInput = scanner.nextLine().trim();
+
+                    if (nextInput.equals("prev")) {
+                        if (currentPage == 0) {
+                            view.displayErrorMsg("No more pages.");
+                            continue;
+                        }
+                        currentPage = Math.max(0, currentPage - 1);
+                        view.displayPlaylistsByCategory(playlistsByCategory.subList(
+                                currentPage * itemsPerPage,
+                                Math.min(playlistsByCategory.size(), (currentPage + 1) * itemsPerPage)
+                        ));
+                        view.displayPageInfo(currentPage, totalPages);
+                    } else if (nextInput.equals("next")) {
+                        if (currentPage == totalPages - 1) {
+                            view.displayErrorMsg("No more pages.");
+                            continue;
+                        }
+                        currentPage = Math.min(totalPages - 1, currentPage + 1);
+                        view.displayPlaylistsByCategory(playlistsByCategory.subList(
+                                currentPage * itemsPerPage,
+                                Math.min(playlistsByCategory.size(), (currentPage + 1) * itemsPerPage)
+                        ));
+                        view.displayPageInfo(currentPage, totalPages);
+                    } else {
+                        if (nextInput.startsWith("playlists")) {
+                            if (nextInput.length() < 11) {
+                                view.displayErrorMsg("Invalid input");
+                            } else {
+                                controller.setCurrentStrategy(new PlaylistsStrategy(model, view, nextInput));
+                                controller.getCurrentStrategy().handleInput();
+                                break;
+                            }
+                        } else if (controller.getInputStrategiesMap().containsKey(nextInput)) {
+                            Strategy nextStrategy = controller.getInputStrategiesMap().get(nextInput);
+                            controller.setCurrentStrategy(nextStrategy);
+                            controller.getCurrentStrategy().handleInput();
+                            break;
+                        } else {
+                            view.displayErrorMsg("Invalid input");
+                        }
+                    }
+                }
+
             }
         }
     }
