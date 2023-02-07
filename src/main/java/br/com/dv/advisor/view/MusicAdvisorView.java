@@ -67,7 +67,9 @@ public class MusicAdvisorView {
     public void displayAuthResponseMsg(String accessToken) {
         System.out.println("response: ");
         System.out.println(accessToken);
-        System.out.println("Success!");
+        if (!accessToken.contains("error")) {
+            System.out.println("Success!");
+        }
     }
 
     public void displayErrorMsg(String message) {
