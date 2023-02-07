@@ -17,19 +17,23 @@ Este projeto foi criado como parte da trilha de Desenvolvedor Java da [JetBrains
 ### Uso
 Se você quiser testar o aplicativo, siga os passos abaixo:
 
-1 - Acesse o site [Spotify for Developers](https://developer.spotify.com/dashboard/login) e crie um aplicativo teste.
+##### **1** -
+Acesse o site [Spotify for Developers](https://developer.spotify.com/dashboard/login) e crie um aplicativo teste.
 
-Na página dele, você poderá obter o CLIENT_ID e o CLIENT_SECRET que você precisará para testar o music-advisor.
+Na página dele, você poderá obter o CLIENT_ID e o CLIENT_SECRET, necessários para testar o music-advisor.
 
 Além disso, você precisará adicionar a seguinte redirect URI ao seu aplicativo: http://localhost:8080.
 
 Para fazer isso, acesse a seção Edit Settings do aplicativo e adicione http://localhost:8080 ao campo _Redirect URIs_.
 
-2 - Clone o repositório e abra-o em um IDE.
+##### **2** - 
+Clone o repositório e abra-o em um IDE.
 
-Em seguida, acesse a classe MusicAdvisorConfig (dentro do pacote config) e atualize o CLIENT_ID e o CLIENT_SECRET com valores válidos.
+##### **3** -
+Em seguida, acesse a classe MusicAdvisorConfig (dentro do pacote config) e atualize o CLIENT_ID e o CLIENT_SECRET com valores válidos (os obtidos no site Spotify for Developers ao criar um aplicativo teste).
 
-3 - Execute o programa a partir da classe Main e digite o comando _auth_ para obter um link de autorização.
+##### **4** - 
+Execute o programa a partir da classe Main e digite o comando _auth_ para obter um link de autorização.
 
 Uma vez que você tenha autorizado o aplicativo, obterá acesso aos os seguintes comandos:
 

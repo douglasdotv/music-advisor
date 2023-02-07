@@ -13,18 +13,23 @@ MusicAdvisor is a simple command-line application that provides users with acces
 ### Usage
 If you want to test the app, follow the steps below:
 
-1 - Head to [Spotify for Developers](https://developer.spotify.com/dashboard/login) website and create a test app.
+##### **1** - 
+Head to [Spotify for Developers](https://developer.spotify.com/dashboard/login) website and create a test app.
 
-There, you will be able to get the CLIENT_ID and CLIENT_SECRET that you will need to use the application.
+There, you will be able to get CLIENT_ID and CLIENT_SECRET, which are needed to test music-advisor.
 
 Also, you will need to add the following redirect URI to your app: http://localhost:8080. 
 
 To do that, head to the Edit Settings section of your app and add http://localhost:8080 to the Redirect URIs field.
 
-2 - Clone the repository and open it on an IDE.
-Then, head to the MusicAdvisorConfig class (inside config package) and update the CLIENT_ID and CLIENT_SECRET with valid values.
+##### **2** - 
+Clone the repository and open it on an IDE.
 
-3 - Run the program from the Main class and input _auth_ command to get an authorization link.
+##### **3** -
+Head to the MusicAdvisorConfig class (inside config package) and update the CLIENT_ID and CLIENT_SECRET with valid values (the ones you got from Spotify for Developers website).
+
+##### **4** - 
+Run the program from the Main class and input _auth_ command to get an authorization link.
 
 Once you have authorized the app, you will be able to access the following commands:
 
