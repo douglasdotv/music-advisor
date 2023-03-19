@@ -1,7 +1,7 @@
 package br.com.dv.advisor.controller.inputstrategy;
 
-import br.com.dv.advisor.data.CategoryData;
-import br.com.dv.advisor.model.MusicAdvisorModel;
+import br.com.dv.advisor.model.CategoryData;
+import br.com.dv.advisor.model.SpotifyApiData;
 import br.com.dv.advisor.network.NetworkClient;
 import br.com.dv.advisor.view.MusicAdvisorView;
 import com.google.gson.JsonArray;
@@ -11,8 +11,8 @@ import java.util.List;
 
 public class CategoriesStrategy extends AbstractStrategy {
 
-    public CategoriesStrategy(MusicAdvisorModel model, MusicAdvisorView view) {
-        super(model, view);
+    public CategoriesStrategy(SpotifyApiData data, MusicAdvisorView view) {
+        super(data, view);
     }
 
     @Override
@@ -24,15 +24,22 @@ public class CategoriesStrategy extends AbstractStrategy {
         } else {
             JsonArray categories = jo.get("categories").getAsJsonObject().get("items").getAsJsonArray();
             List<CategoryData> playlistCategories = parseCategoriesfromJson(categories);
-            model.setCategories(playlistCategories);
 
-            int startIndex = getStartIndex();
-            int endIndex = getEndIndex(playlistCategories);
+            data.setCategories(playlistCategories);
 
-            view.displayCategories(playlistCategories.subList(startIndex, endIndex));
+            calculateTotalPages(data.getCategories());
+
+            view.displayCategories(data.getCategories().subList(
+                    getStartingIndex(), getEndIndex(data.getCategories()))
+            );
+
             view.displayPageInfo(currentPage, totalPages);
 
-            while (scanner.hasNext()) {
+            /*
+            if the input is "prev" or "next", the loop will keep going to let the user navigate through the pages
+             */
+            boolean shouldExit = false;
+            while (scanner.hasNext() && !shouldExit) {
                 nextInput = scanner.nextLine().trim();
 
                 if (nextInput.equals("prev")) {
@@ -41,11 +48,14 @@ public class CategoriesStrategy extends AbstractStrategy {
                         continue;
                     }
                     currentPage = Math.max(0, currentPage - 1);
-                    view.displayCategories(playlistCategories.subList(
-                                    currentPage * itemsPerPage,
-                                    Math.min(playlistCategories.size(), (currentPage + 1) * itemsPerPage)
+
+                    view.displayCategories(data.getCategories()
+                            .subList(
+                                    getStartingIndex(),
+                                    getEndIndex(data.getCategories())
                             )
                     );
+
                     view.displayPageInfo(currentPage, totalPages);
                 } else if (nextInput.equals("next")) {
                     if (currentPage == totalPages - 1) {
@@ -53,29 +63,28 @@ public class CategoriesStrategy extends AbstractStrategy {
                         continue;
                     }
                     currentPage = Math.min(totalPages - 1, currentPage + 1);
-                    view.displayCategories(playlistCategories.subList(
-                                    currentPage * itemsPerPage,
-                                    Math.min(playlistCategories.size(), (currentPage + 1) * itemsPerPage)
+
+                    view.displayCategories(data.getCategories()
+                            .subList(
+                                    getStartingIndex(),
+                                    getEndIndex(data.getCategories())
                             )
                     );
+
                     view.displayPageInfo(currentPage, totalPages);
                 } else {
-                    if (nextInput.startsWith("playlists")) {
-                        if (nextInput.length() < 11) {
-                            view.displayErrorMsg("Invalid input");
-                        } else {
-                            controller.setCurrentStrategy(new PlaylistsStrategy(model, view, nextInput));
-                            controller.getCurrentStrategy().handleInput();
-                            break;
-                        }
-                    } else if (controller.getInputStrategiesMap().containsKey(nextInput)) {
-                        Strategy nextStrategy = controller.getInputStrategiesMap().get(nextInput);
-                        controller.setCurrentStrategy(nextStrategy);
-                        controller.getCurrentStrategy().handleInput();
-                        break;
-                    } else {
-                        view.displayErrorMsg("Invalid input");
-                    }
+                    /*
+                    if the input is not "prev" or "next":
+
+                    - if the input is
+                    "featured", "categories", "playlists <existing category>", "new" or "exit",
+                    shouldExit will be true and the pagination loop will break, making way for the next strategy
+
+                    - if the input is invalid
+                    (i.e. not "featured", "categories", "playlists <ec>", "new" or "exit"),
+                    shouldExit will be false and the pagination loop will keep going
+                     */
+                    shouldExit = handleNextInput(nextInput);
                 }
             }
         }

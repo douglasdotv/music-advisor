@@ -7,17 +7,20 @@ import br.com.dv.advisor.oauth2.Authorization;
 public class AuthStrategy implements Strategy {
 
     private final MusicAdvisorView view;
+    private final Authorization authorization;
 
     public AuthStrategy(MusicAdvisorView view) {
         this.view = view;
+        this.authorization = new Authorization(view);
     }
 
     @Override
     public void handleInput() {
         view.displayAuthWaitingMsg(MusicAdvisorConfig.AUTH_URL);
-        Authorization authorization = new Authorization(view);
+
         authorization.createHttpServer();
-        if (!(MusicAdvisorConfig.AUTH_CODE.isEmpty())) {
+
+        if (!MusicAdvisorConfig.AUTH_CODE.isEmpty()) {
             view.displayAuthCodeReceivedMsg();
             authorization.getAccessToken();
         } else {

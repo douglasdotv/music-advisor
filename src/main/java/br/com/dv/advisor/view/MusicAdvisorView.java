@@ -1,15 +1,16 @@
 package br.com.dv.advisor.view;
 
-import br.com.dv.advisor.data.AlbumData;
-import br.com.dv.advisor.data.CategoryData;
-import br.com.dv.advisor.data.PlaylistData;
+import br.com.dv.advisor.model.AlbumData;
+import br.com.dv.advisor.model.CategoryData;
+import br.com.dv.advisor.model.PlaylistData;
 
 import java.util.List;
 
 public class MusicAdvisorView {
 
-    public void displayNewReleases(List<AlbumData> newReleases) {
-        for (AlbumData newRelease : newReleases) {
+    public <T> void displayNewReleases(List<T> newReleases) {
+        for (T object : newReleases) {
+            AlbumData newRelease = (AlbumData) object;
             System.out.println(newRelease.name());
             System.out.println(newRelease.artists());
             System.out.println(newRelease.albumUrl());
@@ -25,8 +26,9 @@ public class MusicAdvisorView {
         }
     }
 
-    public void displayCategories(List<CategoryData> categories) {
-        for (CategoryData category : categories) {
+    public <T> void displayCategories(List<T> categories) {
+        for (T object : categories) {
+            CategoryData category = (CategoryData) object;
             System.out.println(category.name());
         }
     }

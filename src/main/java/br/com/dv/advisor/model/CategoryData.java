@@ -1,4 +1,4 @@
-package br.com.dv.advisor.data;
+package br.com.dv.advisor.model;
 
 public interface CategoryData {
 

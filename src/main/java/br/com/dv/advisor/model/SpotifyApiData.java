@@ -1,13 +1,9 @@
 package br.com.dv.advisor.model;
 
-import br.com.dv.advisor.data.AlbumData;
-import br.com.dv.advisor.data.CategoryData;
-import br.com.dv.advisor.data.PlaylistData;
-
 import java.util.Collections;
 import java.util.List;
 
-public class MusicAdvisorModel {
+public class SpotifyApiData {
 
     private List<AlbumData> newReleases;
     private List<PlaylistData> featuredPlaylists;

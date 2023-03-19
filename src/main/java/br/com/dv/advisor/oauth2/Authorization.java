@@ -12,7 +12,6 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.Objects;
 
 public class Authorization {
 
@@ -49,6 +48,7 @@ public class Authorization {
         });
 
         view.displayWaitingForCodeMsg();
+
         while (code == null) {
             sleep();
         }
@@ -75,10 +75,13 @@ public class Authorization {
         try {
             HttpClient httpClient = HttpClient.newBuilder().build();
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-            if (response != null && response.body().contains("access_token")) {
-                parseAccessToken(response.body());
+            String jsonString = response.body();
+
+            if (jsonString.contains("access_token")) {
+                MusicAdvisorConfig.ACCESS_TOKEN = parseAccessToken(jsonString);
             }
-            view.displayAuthResponseMsg(Objects.requireNonNull(response).body());
+
+            view.displayAuthResponseMsg(jsonString);
         } catch (InterruptedException | IOException e) {
             System.out.println("Error");
         }
@@ -92,9 +95,9 @@ public class Authorization {
         }
     }
 
-    private void parseAccessToken(String body) {
+    private String parseAccessToken(String body) {
         JsonObject jsonObject = JsonParser.parseString(body).getAsJsonObject();
-        MusicAdvisorConfig.ACCESS_TOKEN = jsonObject.get("access_token").getAsString();
+        return jsonObject.get("access_token").getAsString();
     }
 
 }

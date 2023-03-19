@@ -1,6 +1,4 @@
-package br.com.dv.advisor.data;
-
-import br.com.dv.advisor.model.Artist;
+package br.com.dv.advisor.model;
 
 import java.util.List;
 

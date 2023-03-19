@@ -3,10 +3,11 @@ package br.com.dv.advisor.config;
 public class MusicAdvisorConfig {
 
     /*
-    Note: the values for client ID and client secret shown here are not valid.
-    Replace them with your own unique values before using this code.
-    Also, sharing your app credentials can compromise its security and result in unintended usage.
-    It is important to keep client IDs and secrets private.
+    The values for client ID and client secret shown here are not valid.
+    They should be replaced with valid values from an app created on the Spotify Developer Dashboard.
+
+    It should be noted that sharing credentials is a bad practice.
+    (But it's ok for this project.)
      */
 
     public static String SERVER_PATH = "https://accounts.spotify.com";
